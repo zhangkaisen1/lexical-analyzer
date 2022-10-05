@@ -12,8 +12,8 @@ using namespace std;
 
 struct node keywords[MAX];
 
-/*¶Ô¹Ø¼ü×Ö±í½øĞĞ³õÊ¼»¯£¬div,mod,and,orÒ²×÷Îª¹Ø¼ü×Ö´¦Àí*/
-/*×îĞ¡µÄtokenÊÇ30*/
+/*å¯¹å…³é”®å­—è¡¨è¿›è¡Œåˆå§‹åŒ–ï¼Œdiv,mod,and,orä¹Ÿä½œä¸ºå…³é”®å­—å¤„ç†*/
+/*æœ€å°çš„tokenæ˜¯30*/
 void init()
 {
     int j;
@@ -23,7 +23,7 @@ void init()
     }
 }
 
-/***************¶Ô¹Ø¼ü×Ö½øĞĞËÑË÷**************/
+/***************å¯¹å…³é”®å­—è¿›è¡Œæœç´¢**************/
 int Iskeyword(node keyword[],char* ch) {
     int i;
     for (i = 0; i < MAX; i++) {
@@ -36,7 +36,7 @@ int Iskeyword(node keyword[],char* ch) {
         return 0;
 }
 
-/*****************ÅĞ¶ÏÊÇ·ñÎª×ÖÄ¸*****************/
+/*****************åˆ¤æ–­æ˜¯å¦ä¸ºå­—æ¯*****************/
 bool IsLetter(char c)
 {
     if ((c <= 'z') && (c >= 'a') || (c <= 'Z') && (c >= 'A')) 
@@ -45,7 +45,7 @@ bool IsLetter(char c)
         return 0;
 }
 
-/*************ÅĞ¶ÏÊÇ·ñÎªÊı×Ö**************/
+/*************åˆ¤æ–­æ˜¯å¦ä¸ºæ•°å­—**************/
 bool IsDigit(char c) {
     if (c >= '0' && c <= '9') 
         return 1;
@@ -53,12 +53,12 @@ bool IsDigit(char c) {
         return 0;
 }
 
-/*ÅĞ¶ÏÊÇ·ñÎªµ¥¸öÔËËã·û*/
+/*åˆ¤æ–­æ˜¯å¦ä¸ºå•ä¸ªè¿ç®—ç¬¦*/
 string IsOp(char ch, int Line_No) {
     stringstream ss;
     int i = 0;
     for (; i < MAX; i++) {
-        cout << ch << endl;
+        
         if (op[i].myoperator[0] == ch)
             break;
     }
@@ -66,34 +66,34 @@ string IsOp(char ch, int Line_No) {
         ss << op[i].myoperator << "\t\t" << op[i].number << "\t\t" << op[i].type << endl;
     }
     else {
-        ss << "ÔÚµÚ" << Line_No << "ĞĞÎŞ·¨Ê¶±ğµÄ×Ö·û\t" << ch << endl;
+        ss << "åœ¨ç¬¬" << Line_No << "è¡Œæ— æ³•è¯†åˆ«çš„å­—ç¬¦\t" << ch << endl;
     }
     return ss.str();
 }
 
 
-/***************·ÖÎö³ÌĞò**************/
+/***************åˆ†æç¨‹åº**************/
 void text_analyse(string input, string output) {
 
     fstream fin, fout;
     fin.open(input.c_str(), ios::in | ios::binary);
     fout.open(output.c_str(), ios::out | ios::binary);
     if (!fin.is_open()) {
-        cout << "ÎŞ·¨´ò¿ªĞèÒª¶ÁÈ¡µÄÎÄ¼ş" << endl;
+        cout << "æ— æ³•æ‰“å¼€éœ€è¦è¯»å–çš„æ–‡ä»¶" << endl;
         return;
     }
 
     char arr[MAXBUF];
     int j = 0;
-    char ch = ' ';             /*´æ·Å¶ÁÈëµ±Ç°µÄÊäÈë×Ö·û*/
-    int Line_NO = 0;                /*¼ÍÂ¼ĞĞºÅ*/
+    char ch = ' ';             /*å­˜æ”¾è¯»å…¥å½“å‰çš„è¾“å…¥å­—ç¬¦*/
+    int Line_NO = 0;                /*çºªå½•è¡Œå·*/
     while ((ch = (fin).get()) != EOF) {
-        /*¿Õ¸ñ¡¢tab*/
+        /*ç©ºæ ¼ã€tab*/
         if (ch == ' ' || ch == '\t') {
             continue;
         }
-        else if (ch == '\n') { Line_NO++; }
-        /*×Ö·û´®*/
+        else if (ch == '\n' || ch == '\r') { Line_NO++; }
+        /*å­—ç¬¦ä¸²*/
         else if (IsLetter(ch)) {
             while (IsLetter(ch) | IsDigit(ch) | (ch == '_')) {
                 if ((ch <= 'Z') && (ch >= 'A'))
@@ -106,12 +106,12 @@ void text_analyse(string input, string output) {
             arr[j] = '\0';
             j = 0;
             if (Iskeyword(keywords, arr)){
-                fout << arr << "\t\t" << Iskeyword(keywords, arr) << "\t\t" << "¹Ø¼ü×Ö" << endl;
+                fout << arr << "\t\t" << Iskeyword(keywords, arr) << "\t\t" << "å…³é”®å­—" << endl;
             }
             else
-                fout << arr << "\t\t" << 1 << "\t\t" << "±êÊ¶·û" << endl;
+                fout << arr << "\t\t" << 1 << "\t\t" << "æ ‡è¯†ç¬¦" << endl;
         }
-        /*Êı×Ö*/
+        /*æ•°å­—*/
         else if (IsDigit(ch)) {
             int s = 0;
             while (IsDigit(ch) | IsLetter(ch)) {
@@ -131,36 +131,39 @@ void text_analyse(string input, string output) {
             arr[j] = '\0';
             j = 0;
             if (s == 0)
-                fout << arr << "\t\t" << 2 << "\t\t" << "ÎŞ·ûºÅÕûÊı" << endl;
+                fout << arr << "\t\t" << 2 << "\t\t" << "æ— ç¬¦å·æ•´æ•°" << endl;
             else if (s == 1)
-                fout << arr << "\t\t" << 3 << "\t\t" << "ÎŞ·¨ÊÔ±ğ" << endl;
+                fout << arr << "\t\t" << 3 << "\t\t" << "æ— æ³•è¯•åˆ«" << endl;
         }
         else {
             /*>,>=*/
             if (ch == '>') {
                 ch = fin.get();
                 if (ch == '=')
-                    fout << ">=" << "\t\t" << 41 << "\t\t" << "ÔËËã·û" << endl;
+                    fout << ">=" << "\t\t" << 20 << "\t\t" << "è¿ç®—ç¬¦" << endl;
                 else {
-                    fout << ">" << "\t\t" << 41 << "\t\t" << "ÔËËã·û" << endl;
+                    fout << ">" << "\t\t" << 19 << "\t\t" << "è¿ç®—ç¬¦" << endl;
                     fin.seekg(-1, ios::cur);
                 }
             }
-            /*<,<=,<>*/
+            /*<,<=,<>ï¼Œ<<*/
             else if (ch == '<') {
                 ch = (fin).get();
                 if (ch == '=')
-                    fout << "<=" << "\t\t" << 41 << "\t\t" << "ÔËËã·û" << endl;
+                    fout << "<=" << "\t\t" << 22 << "\t\t" << "è¿ç®—ç¬¦" << endl;
                 else if (ch == '>')
-                    fout << "<>" << "\t\t" << 41 << "\t\t" << "ÔËËã·û" << endl;
+                    fout << "<>" << "\t\t" << 24 << "\t\t" << "å…¶ä»–" << endl;
+                else if (ch == '<'){
+                    fout << "<<" << "\t\t" << 25 << "\t\t" << "è¿ç®—ç¬¦" << endl;
+                }
                 else {
-                    fout << "<" << "\t\t" << 41 << "\t\t" << "ÔËËã·û" << endl;
+                    fout << "<" << "\t\t" << 21 << "\t\t" << "è¿ç®—ç¬¦" << endl;
                     (fin).seekg(-1, ios::cur);
                 }
             }
-            /*µ¥·ûºÅ*/
+            /*å•ç¬¦å·*/
             else {
-                IsOp(ch, Line_NO);
+                fout << IsOp(ch, Line_NO);
             }
             
         }
