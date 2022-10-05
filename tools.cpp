@@ -12,14 +12,13 @@ using namespace std;
 
 struct node keywords[MAX];
 
-/*对关键字表进行初始化，div,mod,and,or也作为关键字处理*/
-/*最小的token是30*/
+/*最小的token是OP_MAX + 3 + 1*/
 void init()
 {
     int j;
     for (j = 0; j < MAX; j++){
         strcpy(keywords[j].lexptr, key[j]);
-        keywords[j].token = j + 30;
+        keywords[j].token = j + OP_MAX + 3 + 1;
     }
 }
 
@@ -57,16 +56,16 @@ bool IsDigit(char c) {
 string IsOp(char ch, int Line_No) {
     stringstream ss;
     int i = 0;
-    for (; i < MAX; i++) {
+    for (; i < OP_MAX; i++) {
         
         if (op[i].myoperator[0] == ch)
             break;
     }
-    if (i < MAX) {
+    if (i < OP_MAX) {
         ss << op[i].myoperator << "\t\t" << op[i].number << "\t\t" << op[i].type << endl;
     }
     else {
-        ss << "在第" << Line_No << "行无法识别的字符\t" << ch << endl;
+        ss << "在第" << Line_No << "行无法识别的字符\t" << ch << endl << endl;
     }
     return ss.str();
 }
@@ -89,10 +88,10 @@ void text_analyse(string input, string output) {
     int Line_NO = 0;                /*纪录行号*/
     while ((ch = (fin).get()) != EOF) {
         /*空格、tab*/
-        if (ch == ' ' || ch == '\t') {
+        if (ch == ' ' || ch == '\t' || ch == '\r') {
             continue;
         }
-        else if (ch == '\n' || ch == '\r') { Line_NO++; }
+        else if (ch == '\n' ) { Line_NO++; }
         /*字符串*/
         else if (IsLetter(ch)) {
             while (IsLetter(ch) | IsDigit(ch) | (ch == '_')) {
@@ -131,7 +130,7 @@ void text_analyse(string input, string output) {
             arr[j] = '\0';
             j = 0;
             if (s == 0)
-                fout << arr << "\t\t" << 2 << "\t\t" << "无符号整数" << endl;
+                fout << arr << "\t\t" << 2 << "\t\t" << "常数" << endl;
             else if (s == 1)
                 fout << arr << "\t\t" << 3 << "\t\t" << "无法试别" << endl;
         }
@@ -140,9 +139,9 @@ void text_analyse(string input, string output) {
             if (ch == '>') {
                 ch = fin.get();
                 if (ch == '=')
-                    fout << ">=" << "\t\t" << 20 << "\t\t" << "运算符" << endl;
+                    fout << ">=" << "\t\t" << 20 << "\t\t" << "算符" << endl;
                 else {
-                    fout << ">" << "\t\t" << 19 << "\t\t" << "运算符" << endl;
+                    fout << ">" << "\t\t" << 19 << "\t\t" << "算符" << endl;
                     fin.seekg(-1, ios::cur);
                 }
             }
@@ -150,14 +149,54 @@ void text_analyse(string input, string output) {
             else if (ch == '<') {
                 ch = (fin).get();
                 if (ch == '=')
-                    fout << "<=" << "\t\t" << 22 << "\t\t" << "运算符" << endl;
+                    fout << "<=" << "\t\t" << 22 << "\t\t" << "算符" << endl;
                 else if (ch == '>')
                     fout << "<>" << "\t\t" << 24 << "\t\t" << "其他" << endl;
                 else if (ch == '<'){
-                    fout << "<<" << "\t\t" << 25 << "\t\t" << "运算符" << endl;
+                    fout << "<<" << "\t\t" << 25 << "\t\t" << "算符" << endl;
                 }
                 else {
-                    fout << "<" << "\t\t" << 21 << "\t\t" << "运算符" << endl;
+                    fout << "<" << "\t\t" << 21 << "\t\t" << "算符" << endl;
+                    (fin).seekg(-1, ios::cur);
+                }
+            }
+            /*=,==*/
+            else if (ch == '=') {
+                ch = (fin).get();
+                if (ch == '=')
+                    fout << "==" << "\t\t" << 29 << "\t\t" << "算符" << endl;
+                else {
+                    fout << "=" << "\t\t" << 18 << "\t\t" << "算符" << endl;
+                    (fin).seekg(-1, ios::cur);
+                }
+            }
+            /*!,!=*/
+            else if (ch == '!') {
+                ch = (fin).get();
+                if (ch == '=')
+                    fout << "!=" << "\t\t" << 24 << "\t\t" << "算符" << endl;
+                else {
+                    fout << "!" << "\t\t" << 28 << "\t\t" << "算符" << endl;
+                    (fin).seekg(-1, ios::cur);
+                }
+            }
+            /*||,|*/
+            else if (ch == '|') {
+                ch = (fin).get();
+                if (ch == '|')
+                    fout << "||" << "\t\t" << 30 << "\t\t" << "算符" << endl;
+                else {
+                    fout << "|" << "\t\t" << 31 << "\t\t" << "算符" << endl;
+                    (fin).seekg(-1, ios::cur);
+                }
+            }
+            /*||,|*/
+            else if (ch == '&') {
+                ch = (fin).get();
+                if (ch == '&')
+                    fout << "&&" << "\t\t" << 32 << "\t\t" << "算符" << endl;
+                else {
+                    fout << "&" << "\t\t" << 33 << "\t\t" << "算符" << endl;
                     (fin).seekg(-1, ios::cur);
                 }
             }
